@@ -14,7 +14,8 @@ class SuspectDeviceFilter(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS)
     val bloomFilter = BloomFilter.create(
         Funnels.stringFunnel(Charset.defaultCharset()),
         expectedInsertions,
-        ACCEPTABLE_FALSE_POSITIVE_PERCENTAGE)
+        ACCEPTABLE_FALSE_POSITIVE_PERCENTAGE
+    )
 
     fun mightBeSuspect(deviceId: String): Boolean {
         return bloomFilter.mightContain(deviceId)
