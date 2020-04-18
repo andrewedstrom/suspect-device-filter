@@ -1,3 +1,5 @@
+![](github.com/andrewedstrom/suspect-device-filter/workflows/unit-tests/badge.svg)
+
 # Suspect Device Filter
 ![Good Will Hunting You're Suspect](https://i.imgur.com/6wjpgGi.jpg "Good Will Hunting You're Suspect")
 
