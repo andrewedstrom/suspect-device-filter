@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class SuspectDeviceFilterTest {
-    lateinit var suspectDeviceFilter: SuspectDeviceFilter
+    private lateinit var suspectDeviceFilter: SuspectDeviceFilter
 
     @BeforeEach
     fun setup() {
