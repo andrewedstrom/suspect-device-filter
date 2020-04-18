@@ -23,5 +23,6 @@ class SuspectDeviceFilterTest {
         val suspectDeviceId = "known-vpn-server-id"
         suspectDeviceFilter.markDeviceAsSuspect(suspectDeviceId)
         assertTrue(suspectDeviceFilter.mightBeSuspect(suspectDeviceId))
+        assertFalse(suspectDeviceFilter.mightBeSuspect("innocent-device-id"))
     }
 }
