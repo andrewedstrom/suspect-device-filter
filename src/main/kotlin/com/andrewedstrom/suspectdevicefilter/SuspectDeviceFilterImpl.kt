@@ -11,7 +11,7 @@ const val DEFAULT_EXPECTED_INSERTIONS = 500000
 class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) : SuspectDeviceFilter {
     //TODO: validate input
     //TODO: handle failed filter creation
-    val bloomFilter = BloomFilter.create(
+    private val bloomFilter = BloomFilter.create(
         Funnels.stringFunnel(Charset.defaultCharset()),
         expectedInsertions,
         DESIRED_FALSE_POSITIVE_PERCENTAGE
