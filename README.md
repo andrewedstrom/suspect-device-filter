@@ -12,6 +12,9 @@ This library is built around a `SuspectDeviceFilter` class, which is a fast and 
 This is _not_ meant to be used as a definitive test of whether a device is suspect, as it will report false positives in 1% of cases. It serves as a in-memory cache which can quickly flag potentially suspicious requests to be further vetted downstream.
 
 # Testing the code
+The following will run both functionality and performance tests.
 ```
 ./gradlew clean test
 ```
+
+Results of the performance tests will be printed to standard out, and the test suite will fail if performance falls below acceptable values. 
