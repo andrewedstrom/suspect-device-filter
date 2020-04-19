@@ -1,5 +1,6 @@
 package com.andrewedstrom.suspectdevicefilter
 
+import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,11 +24,7 @@ class SuspectDeviceFilterImplPerformanceTest {
 
     @Test
     fun `It reports false positives for fewer than 1% of innocent devices`() {
-        // We chose to train the filter with the maximum number of expected insertions because
-        // that will give us the worst-case false positive percentage.
-        //
-        // A smaller number of suspect devices will always yield a lower percentage of false positives
-        println("Training filter with $expectedInsertions suspect devices")
+        println("Training filter with $expectedInsertions suspect devices, to demonstrate worst-case false positive percentage")
         (1..expectedInsertions)
             .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
@@ -44,11 +41,44 @@ class SuspectDeviceFilterImplPerformanceTest {
         assertTrue(falsePositivePercentage < 0.01)
     }
 
+    @Test
+    fun `It takes up much less space in memory than a naive hashmap-based implementation`() {
+        // Hashmap-based implementation to which we will compare SuspectDeviceFilterImpl
+        val naiveSuspectDeviceFilter = NaiveSuspectDeviceFilter()
+
+        val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
+        println("Training both suspectDeviceFilter and naive hash map implementation with $expectedInsertions suspect devices")
+        suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
+        suspectDevices.forEach { naiveSuspectDeviceFilter.markDeviceAsSuspect(it) }
+
+        val naiveImplementationSize = ObjectSizeCalculator.getObjectSize(naiveSuspectDeviceFilter)
+        val trueImplementationSize = ObjectSizeCalculator.getObjectSize(suspectDeviceFilter)
+
+        println("Size of naive implementation after training: $naiveImplementationSize")
+        println("Size of real implementation after training: $trueImplementationSize")
+        val sizeComparisonRatio = (trueImplementationSize / naiveImplementationSize.toDouble()) * 100
+        println("Real implementation is ${sizeComparisonRatio}% the size of the naive implementation")
+
+        assertTrue(naiveImplementationSize > trueImplementationSize)
+    }
+
     private fun generateRandomString(): String {
         val allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890"
         val stringLength = 6
         return (1..stringLength)
             .map { allowedChars.random() }
             .joinToString("")
+    }
+
+    inner class NaiveSuspectDeviceFilter : SuspectDeviceFilter {
+        private val knownSuspectDevices = HashMap<String, Boolean>()
+
+        override fun mightBeSuspect(deviceId: String): Boolean {
+            return knownSuspectDevices.containsKey(deviceId)
+        }
+
+        override fun markDeviceAsSuspect(deviceId: String) {
+            knownSuspectDevices.put(deviceId, true)
+        }
     }
 }
