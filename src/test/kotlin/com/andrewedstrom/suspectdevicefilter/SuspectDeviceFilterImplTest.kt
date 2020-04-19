@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class SuspectDeviceFilterTest {
-    private lateinit var suspectDeviceFilter: SuspectDeviceFilter
+class SuspectDeviceFilterImplTest {
+    private lateinit var suspectDeviceFilter: SuspectDeviceFilterImpl
 
     @BeforeEach
     fun setup() {
-        suspectDeviceFilter = SuspectDeviceFilter()
+        suspectDeviceFilter = SuspectDeviceFilterImpl()
     }
 
     @Test

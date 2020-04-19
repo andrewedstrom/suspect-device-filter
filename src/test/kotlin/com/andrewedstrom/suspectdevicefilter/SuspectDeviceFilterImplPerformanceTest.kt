@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class SuspectDeviceFilterPerformanceTest {
-    private lateinit var suspectDeviceFilter: SuspectDeviceFilter
+class SuspectDeviceFilterImplPerformanceTest {
+    private lateinit var suspectDeviceFilter: SuspectDeviceFilterImpl
     private val expectedInsertions = 600000
 
     @BeforeEach
     fun setup() {
-        suspectDeviceFilter = SuspectDeviceFilter(expectedInsertions)
+        suspectDeviceFilter = SuspectDeviceFilterImpl(expectedInsertions)
     }
 
     @Test
