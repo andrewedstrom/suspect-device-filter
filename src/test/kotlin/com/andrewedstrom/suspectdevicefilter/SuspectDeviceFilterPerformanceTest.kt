@@ -13,31 +13,28 @@ class SuspectDeviceFilterPerformanceTest {
     }
 
     @Test
-    fun `It correctly flags all suspect devices with no false negatives`() {
+    fun `It correctly flags all known suspect devices with no false negatives`() {
         val suspectDevices = (1..500000).map { generateRandomString() }
 
-        println("Training filter with 500000 suspect devices")
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
-
-        println("Asserting that the filter flags all suspect devices")
         suspectDevices.forEach { assertTrue(suspectDeviceFilter.mightBeSuspect(it)) }
     }
 
     @Test
     fun `It has a false positive ratio less than 1%`() {
-        println("Training filter with 500000 suspect devices")
-        (1..500000)
+        val numberOfSuspectDevices = 500000
+        println("Training filter with $numberOfSuspectDevices suspect devices")
+        (1..numberOfSuspectDevices)
             .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
 
-        println("Testing 2 million innocent devices")
         val numberOfInnocentDevices = 2000000
         val falsePositiveCount = (1..numberOfInnocentDevices)
             .map { generateRandomString().toLowerCase() } //Innocent devices ids are lowercase
             .count { suspectDeviceFilter.mightBeSuspect(it) }
-
         val falsePositivePercentage = falsePositiveCount / numberOfInnocentDevices.toDouble()
-        println("$falsePositiveCount innocent devices were marked suspect")
+
+        println("Out of $numberOfInnocentDevices innocent devices, $falsePositiveCount were marked suspect")
         println("False positive ratio: $falsePositivePercentage")
         assertTrue(falsePositivePercentage < 0.01)
     }
