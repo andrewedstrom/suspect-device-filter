@@ -25,6 +25,8 @@ class SuspectDeviceFilterPerformanceTest {
     fun `It reports false positives for fewer than 1% of innocent devices`() {
         // We chose to train the filter with the maximum number of expected insertions because
         // that will give us the worst-case false positive percentage.
+        //
+        // A smaller number of suspect devices will always yield a lower percentage of false positives
         println("Training filter with $expectedInsertions suspect devices")
         (1..expectedInsertions)
             .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
