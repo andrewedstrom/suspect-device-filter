@@ -6,35 +6,38 @@ import org.junit.jupiter.api.Test
 
 class SuspectDeviceFilterPerformanceTest {
     private lateinit var suspectDeviceFilter: SuspectDeviceFilter
+    private val expectedInsertions = 600000
 
     @BeforeEach
     fun setup() {
-        suspectDeviceFilter = SuspectDeviceFilter()
+        suspectDeviceFilter = SuspectDeviceFilter(expectedInsertions)
     }
 
     @Test
-    fun `It correctly flags all known suspect devices with no false negatives`() {
-        val suspectDevices = (1..500000).map { generateRandomString() }
+    fun `It correctly flags all known suspect devices with zero false negatives`() {
+        val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
 
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { assertTrue(suspectDeviceFilter.mightBeSuspect(it)) }
     }
 
     @Test
-    fun `It has a false positive ratio less than 1%`() {
-        val numberOfSuspectDevices = 500000
-        println("Training filter with $numberOfSuspectDevices suspect devices")
-        (1..numberOfSuspectDevices)
+    fun `It reports false positives for fewer than 1% of innocent devices`() {
+        // We chose to train the filter with the maximum number of expected insertions because
+        // that will give us the worst-case false positive percentage.
+        println("Training filter with $expectedInsertions suspect devices")
+        (1..expectedInsertions)
             .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
 
         val numberOfInnocentDevices = 2000000
+        println("Testing $numberOfInnocentDevices innocent devices")
         val falsePositiveCount = (1..numberOfInnocentDevices)
             .map { generateRandomString().toLowerCase() } //Innocent devices ids are lowercase
             .count { suspectDeviceFilter.mightBeSuspect(it) }
         val falsePositivePercentage = falsePositiveCount / numberOfInnocentDevices.toDouble()
 
-        println("Out of $numberOfInnocentDevices innocent devices, $falsePositiveCount were marked suspect")
+        println("$falsePositiveCount innocent devices were incorrectly marked suspect")
         println("False positive ratio: $falsePositivePercentage")
         assertTrue(falsePositivePercentage < 0.01)
     }
