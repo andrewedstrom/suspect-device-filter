@@ -17,7 +17,6 @@ class SuspectDeviceFilterImplPerformanceTest {
     @Test
     fun `It correctly flags all known suspect devices with zero false negatives`() {
         val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
-
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { assertTrue(suspectDeviceFilter.mightBeSuspect(it)) }
     }
@@ -34,11 +33,11 @@ class SuspectDeviceFilterImplPerformanceTest {
         val falsePositiveCount = (1..numberOfInnocentDevices)
             .map { generateRandomString().toLowerCase() } //Innocent devices ids are lowercase
             .count { suspectDeviceFilter.mightBeSuspect(it) }
-        val falsePositivePercentage = falsePositiveCount / numberOfInnocentDevices.toDouble()
-
         println("$falsePositiveCount innocent devices were incorrectly marked suspect")
-        println("False positive percent: ${falsePositivePercentage * 100}%")
-        assertTrue(falsePositivePercentage < 0.01)
+
+        val falsePositiveRatio = falsePositiveCount / numberOfInnocentDevices.toDouble()
+        println("False positive percent: %.2f%%".format(falsePositiveRatio * 100))
+        assertTrue(falsePositiveRatio < 0.01)
     }
 
     @Test
@@ -47,7 +46,7 @@ class SuspectDeviceFilterImplPerformanceTest {
         val naiveSuspectDeviceFilter = NaiveSuspectDeviceFilter()
 
         val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
-        println("Training both suspectDeviceFilter and naive hash map implementation with $expectedInsertions suspect devices")
+        println("Training both SuspectDeviceFilterImpl and naive hash map implementation with $expectedInsertions suspect devices")
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { naiveSuspectDeviceFilter.markDeviceAsSuspect(it) }
 
@@ -56,9 +55,9 @@ class SuspectDeviceFilterImplPerformanceTest {
 
         println("Size of naive implementation after training: $naiveImplementationSize")
         println("Size of real implementation after training: $trueImplementationSize")
-        val sizeComparisonRatio = (trueImplementationSize / naiveImplementationSize.toDouble()) * 100
-        println("Real implementation is ${sizeComparisonRatio}% the size of the naive implementation")
 
+        val sizeComparisonRatio = (trueImplementationSize / naiveImplementationSize.toDouble()) * 100
+        println("Real implementation is %.2f%% the size of the naive implementation".format(sizeComparisonRatio))
         assertTrue(naiveImplementationSize > trueImplementationSize)
     }
 
