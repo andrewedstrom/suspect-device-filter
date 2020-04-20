@@ -24,7 +24,7 @@ class SuspectDeviceFilterImplPerformanceTest {
     @Test
     fun `It reports false positives for fewer than 1% of innocent devices`() {
         println("SuspectDeviceFilter has expectedInsertions value of $expectedInsertions")
-        println("Training filter with $expectedInsertions suspect devices, to demonstrate worst-case false positive percentage")
+        println("Training filter with $expectedInsertions suspect devices to demonstrate worst-case false positive percentage")
         generateRandomDevices(expectedInsertions)
             .map { it.toUpperCase() }
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
@@ -43,7 +43,7 @@ class SuspectDeviceFilterImplPerformanceTest {
 
     @Test
     fun `It takes up much less space in memory than a naive hashmap-based implementation`() {
-        // Hashmap-based implementation to which we will compare SuspectDeviceFilterImpl
+        // Hashmap-based SuspectDeviceFilter to which we will compare SuspectDeviceFilterImpl
         val naiveSuspectDeviceFilter = NaiveSuspectDeviceFilter()
 
         println("SuspectDeviceFilter has expectedInsertions value of $expectedInsertions")
@@ -64,7 +64,7 @@ class SuspectDeviceFilterImplPerformanceTest {
                 sizeComparisonRatio
             )
         )
-        assertTrue(naiveImplementationSize > trueImplementationSize)
+        assertTrue(trueImplementationSize < naiveImplementationSize * .3)
     }
 
     inner class NaiveSuspectDeviceFilter : SuspectDeviceFilter {
