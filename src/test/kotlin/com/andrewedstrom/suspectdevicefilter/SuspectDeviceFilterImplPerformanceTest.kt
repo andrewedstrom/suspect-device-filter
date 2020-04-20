@@ -28,14 +28,14 @@ class SuspectDeviceFilterImplPerformanceTest {
             .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
 
-        val numberOfInnocentDevices = 2000000
-        println("Testing $numberOfInnocentDevices innocent devices")
-        val falsePositiveCount = (1..numberOfInnocentDevices)
+        val numInnocentDevices = 2000000
+        println("Testing $numInnocentDevices innocent devices")
+        val falsePositiveCount = (1..numInnocentDevices)
             .map { generateRandomString().toLowerCase() } //Innocent devices ids are lowercase
             .count { suspectDeviceFilter.mightBeSuspect(it) }
         println("$falsePositiveCount innocent devices were incorrectly marked suspect")
 
-        val falsePositivePercent = (falsePositiveCount / numberOfInnocentDevices.toDouble()) * 100
+        val falsePositivePercent = (falsePositiveCount / numInnocentDevices.toDouble()) * 100
         println("False positive percent: %.2f%%".format(falsePositivePercent))
         assertTrue(falsePositivePercent < 1)
     }
