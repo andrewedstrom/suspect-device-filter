@@ -16,7 +16,7 @@ class SuspectDeviceFilterImplPerformanceTest {
 
     @Test
     fun `It correctly flags all known suspect devices with zero false negatives`() {
-        val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
+        val suspectDevices = generateRandomDevices(expectedInsertions)
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { assertTrue(suspectDeviceFilter.mightBeSuspect(it)) }
     }
@@ -24,20 +24,20 @@ class SuspectDeviceFilterImplPerformanceTest {
     @Test
     fun `It reports false positives for fewer than 1% of innocent devices`() {
         println("Training filter with $expectedInsertions suspect devices, to demonstrate worst-case false positive percentage")
-        (1..expectedInsertions)
-            .map { generateRandomString().toUpperCase() } // Suspect device ids are uppercase
+        generateRandomDevices(expectedInsertions)
+            .map { it.toUpperCase() }
             .forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
 
         val numInnocentDevices = 2000000
         println("Testing $numInnocentDevices innocent devices")
-        val falsePositiveCount = (1..numInnocentDevices)
-            .map { generateRandomString().toLowerCase() } //Innocent devices ids are lowercase
+        val falsePositiveCount = generateRandomDevices(numInnocentDevices)
+            .map { it.toLowerCase() }
             .count { suspectDeviceFilter.mightBeSuspect(it) }
         println("$falsePositiveCount innocent devices were incorrectly marked suspect")
 
         val falsePositivePercent = (falsePositiveCount / numInnocentDevices.toDouble()) * 100
         println("False positive percent: %.2f%%".format(falsePositivePercent))
-        assertTrue(falsePositivePercent < 1)
+        assertTrue(falsePositivePercent < 1.0)
     }
 
     @Test
@@ -45,8 +45,8 @@ class SuspectDeviceFilterImplPerformanceTest {
         // Hashmap-based implementation to which we will compare SuspectDeviceFilterImpl
         val naiveSuspectDeviceFilter = NaiveSuspectDeviceFilter()
 
-        val suspectDevices = (1..expectedInsertions).map { generateRandomString() }
         println("Training both SuspectDeviceFilterImpl and naive hash map implementation with $expectedInsertions suspect devices")
+        val suspectDevices = generateRandomDevices(expectedInsertions)
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { naiveSuspectDeviceFilter.markDeviceAsSuspect(it) }
 
@@ -57,7 +57,11 @@ class SuspectDeviceFilterImplPerformanceTest {
         println("Size of real implementation after training: $trueImplementationSize")
 
         val sizeComparisonRatio = (trueImplementationSize / naiveImplementationSize.toDouble()) * 100
-        println("Real implementation is %.2f%% the size of the naive implementation".format(sizeComparisonRatio))
+        println(
+            "At max capacity, real implementation is %.2f%% the size of the naive implementation".format(
+                sizeComparisonRatio
+            )
+        )
         assertTrue(naiveImplementationSize > trueImplementationSize)
     }
 
@@ -73,7 +77,9 @@ class SuspectDeviceFilterImplPerformanceTest {
         }
     }
 
-    private fun generateRandomString(): String {
+    private fun generateRandomDevices(numToGenerate: Int) = (1..numToGenerate).map { generateRandomDeviceId() }
+
+    private fun generateRandomDeviceId(): String {
         val allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890"
         val stringLength = 6
         return (1..stringLength).map { allowedChars.random() }.joinToString("")
