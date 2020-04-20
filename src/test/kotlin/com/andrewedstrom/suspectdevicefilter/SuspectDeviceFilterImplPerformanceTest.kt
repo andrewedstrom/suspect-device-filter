@@ -62,23 +62,21 @@ class SuspectDeviceFilterImplPerformanceTest {
         assertTrue(naiveImplementationSize > trueImplementationSize)
     }
 
-    private fun generateRandomString(): String {
-        val allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890"
-        val stringLength = 6
-        return (1..stringLength)
-            .map { allowedChars.random() }
-            .joinToString("")
-    }
-
     inner class NaiveSuspectDeviceFilter : SuspectDeviceFilter {
-        private val knownSuspectDevices = HashMap<String, Boolean>()
+        private val knownSuspectDevices = HashSet<String>()
 
         override fun mightBeSuspect(deviceId: String): Boolean {
-            return knownSuspectDevices.containsKey(deviceId)
+            return knownSuspectDevices.contains(deviceId)
         }
 
         override fun markDeviceAsSuspect(deviceId: String) {
-            knownSuspectDevices.put(deviceId, true)
+            knownSuspectDevices.add(deviceId)
         }
+    }
+
+    private fun generateRandomString(): String {
+        val allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890"
+        val stringLength = 6
+        return (1..stringLength).map { allowedChars.random() }.joinToString("")
     }
 }
