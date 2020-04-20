@@ -35,9 +35,9 @@ class SuspectDeviceFilterImplPerformanceTest {
             .count { suspectDeviceFilter.mightBeSuspect(it) }
         println("$falsePositiveCount innocent devices were incorrectly marked suspect")
 
-        val falsePositiveRatio = falsePositiveCount / numberOfInnocentDevices.toDouble()
-        println("False positive percent: %.2f%%".format(falsePositiveRatio * 100))
-        assertTrue(falsePositiveRatio < 0.01)
+        val falsePositivePercent = (falsePositiveCount / numberOfInnocentDevices.toDouble()) * 100
+        println("False positive percent: %.2f%%".format(falsePositivePercent))
+        assertTrue(falsePositivePercent < 1)
     }
 
     @Test
