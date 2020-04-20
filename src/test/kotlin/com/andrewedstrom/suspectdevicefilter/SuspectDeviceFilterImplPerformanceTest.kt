@@ -23,6 +23,7 @@ class SuspectDeviceFilterImplPerformanceTest {
 
     @Test
     fun `It reports false positives for fewer than 1% of innocent devices`() {
+        println("SuspectDeviceFilter has expectedInsertions value of $expectedInsertions")
         println("Training filter with $expectedInsertions suspect devices, to demonstrate worst-case false positive percentage")
         generateRandomDevices(expectedInsertions)
             .map { it.toUpperCase() }
@@ -45,6 +46,7 @@ class SuspectDeviceFilterImplPerformanceTest {
         // Hashmap-based implementation to which we will compare SuspectDeviceFilterImpl
         val naiveSuspectDeviceFilter = NaiveSuspectDeviceFilter()
 
+        println("SuspectDeviceFilter has expectedInsertions value of $expectedInsertions")
         println("Training both SuspectDeviceFilterImpl and naive hash map implementation with $expectedInsertions suspect devices")
         val suspectDevices = generateRandomDevices(expectedInsertions)
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
