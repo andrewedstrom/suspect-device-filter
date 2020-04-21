@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class SuspectDeviceFilterImplTest {
-    private lateinit var suspectDeviceFilter: SuspectDeviceFilterImpl
+class SuspectDeviceFilterTest {
+    private lateinit var suspectDeviceFilter: SuspectDeviceFilter
 
     @BeforeEach
     fun setup() {
-        suspectDeviceFilter = SuspectDeviceFilterImpl()
+        suspectDeviceFilter = SuspectDeviceFilter()
     }
 
     @Test
@@ -24,5 +24,10 @@ class SuspectDeviceFilterImplTest {
         suspectDeviceFilter.markDeviceAsSuspect(suspectDeviceId)
         assertTrue(suspectDeviceFilter.deviceIsSuspect(suspectDeviceId))
         assertFalse(suspectDeviceFilter.deviceIsSuspect("innocent-device-id"))
+    }
+
+    @Test
+    fun `the fake constructor returns a SuspectDeviceFilterImpl`() {
+        assertTrue(SuspectDeviceFilter() is SuspectDeviceFilterImpl)
     }
 }
