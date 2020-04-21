@@ -5,7 +5,7 @@ interface SuspectDeviceFilter {
     fun markDeviceAsSuspect(deviceId: String)
 }
 
-// Fake "constructor" factory method that returns default implementation
+// Fake "constructor" factory method that returns default implementation of interface
 @Suppress("FunctionName")
 fun SuspectDeviceFilter(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS): SuspectDeviceFilter {
     return SuspectDeviceFilterImpl(expectedInsertions)

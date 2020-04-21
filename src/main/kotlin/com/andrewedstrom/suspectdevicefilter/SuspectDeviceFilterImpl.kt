@@ -11,8 +11,6 @@ const val DEFAULT_EXPECTED_INSERTIONS = 500000
 @Suppress("UnstableApiUsage")
 class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) : SuspectDeviceFilter,
     Serializable {
-    //TODO: validate input
-    //TODO: handle failed filter creation
     private val bloomFilter = BloomFilter.create(
         Funnels.stringFunnel(Charset.defaultCharset()),
         expectedInsertions,
