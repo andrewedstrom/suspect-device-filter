@@ -27,7 +27,7 @@ class SuspectDeviceFilterTest {
     }
 
     @Test
-    fun `the fake constructor returns a SuspectDeviceFilterImpl`() {
+    fun `The fake constructor returns a instance of type SuspectDeviceFilterImpl`() {
         assertTrue(SuspectDeviceFilter() is SuspectDeviceFilterImpl)
     }
 }
