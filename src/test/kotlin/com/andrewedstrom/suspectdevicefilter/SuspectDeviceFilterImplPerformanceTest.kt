@@ -1,9 +1,11 @@
 package com.andrewedstrom.suspectdevicefilter
 
-import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 
 class SuspectDeviceFilterImplPerformanceTest {
     private lateinit var suspectDeviceFilter: SuspectDeviceFilterImpl
@@ -52,11 +54,11 @@ class SuspectDeviceFilterImplPerformanceTest {
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
         suspectDevices.forEach { naiveSuspectDeviceFilter.markDeviceAsSuspect(it) }
 
-        val naiveImplementationSize = ObjectSizeCalculator.getObjectSize(naiveSuspectDeviceFilter)
-        val trueImplementationSize = ObjectSizeCalculator.getObjectSize(suspectDeviceFilter)
+        val naiveImplementationSize = sizeOfSerializedObjectInBytes(naiveSuspectDeviceFilter)
+        val trueImplementationSize = sizeOfSerializedObjectInBytes(suspectDeviceFilter)
 
-        println("Size of naive implementation after training: $naiveImplementationSize")
-        println("Size of real implementation after training: $trueImplementationSize")
+        println("Size of naive implementation after training: $naiveImplementationSize bytes")
+        println("Size of real implementation after training: $trueImplementationSize bytes")
 
         val sizeComparisonRatio = (trueImplementationSize / naiveImplementationSize.toDouble()) * 100
         println(
@@ -64,19 +66,7 @@ class SuspectDeviceFilterImplPerformanceTest {
                 sizeComparisonRatio
             )
         )
-        assertTrue(trueImplementationSize < naiveImplementationSize * .3)
-    }
-
-    inner class NaiveSuspectDeviceFilter : SuspectDeviceFilter {
-        private val knownSuspectDevices = HashSet<String>()
-
-        override fun mightBeSuspect(deviceId: String): Boolean {
-            return knownSuspectDevices.contains(deviceId)
-        }
-
-        override fun markDeviceAsSuspect(deviceId: String) {
-            knownSuspectDevices.add(deviceId)
-        }
+        assertTrue(trueImplementationSize < naiveImplementationSize)
     }
 
     private fun generateRandomDevices(numToGenerate: Int) = (1..numToGenerate).map { generateRandomDeviceId() }
@@ -85,5 +75,29 @@ class SuspectDeviceFilterImplPerformanceTest {
         val allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890"
         val stringLength = 6
         return (1..stringLength).map { allowedChars.random() }.joinToString("")
+    }
+
+    private fun sizeOfSerializedObjectInBytes(obj: Serializable): Int {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        val objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
+        objectOutputStream.writeObject(obj)
+        objectOutputStream.close()
+        return byteArrayOutputStream.toByteArray().size
+    }
+}
+
+class NaiveSuspectDeviceFilter : SuspectDeviceFilter, Serializable {
+    private val knownSuspectDevices = HashSet<String>()
+
+    override fun mightBeSuspect(deviceId: String): Boolean {
+        return knownSuspectDevices.contains(deviceId)
+    }
+
+    override fun markDeviceAsSuspect(deviceId: String) {
+        knownSuspectDevices.add(deviceId)
+    }
+
+    companion object {
+        private const val serialVersionUID = -4244985L
     }
 }
