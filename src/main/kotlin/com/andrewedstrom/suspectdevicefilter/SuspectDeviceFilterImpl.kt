@@ -5,16 +5,22 @@ import com.google.common.hash.Funnels
 import java.io.Serializable
 import java.nio.charset.Charset
 
-const val DESIRED_FALSE_POSITIVE_PERCENTAGE = .009 // To ensure fpp less than 1%, we shoot for .9%
-const val DEFAULT_EXPECTED_INSERTIONS = 500000
-
+/**
+ * An implementation of [SuspectDeviceFilter] using a Bloom Filter as its backing store.
+ *
+ * It is very memory efficient. At full capacity it will be less than 15% the size of a naive hashmap-based implementation
+ *
+ * @param expectedInsertions the maximum number of suspect devices that will be added to this filter. Adding more
+ * devices than this is allowed, but will cause the false positive ratio to rise above [ACCEPTABLE_FALSE_POSITIVE_PERCENTAGE].
+ */
 @Suppress("UnstableApiUsage")
-class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) : SuspectDeviceFilter,
-    Serializable {
+class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) :
+    SuspectDeviceFilter, Serializable {
+
     private val bloomFilter = BloomFilter.create(
         Funnels.stringFunnel(Charset.defaultCharset()),
         expectedInsertions,
-        DESIRED_FALSE_POSITIVE_PERCENTAGE
+        ACCEPTABLE_FALSE_POSITIVE_PERCENTAGE
     )
 
     override fun deviceIsSuspect(deviceId: String): Boolean {
