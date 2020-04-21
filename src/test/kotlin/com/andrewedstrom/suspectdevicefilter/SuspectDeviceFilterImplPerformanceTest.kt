@@ -20,7 +20,7 @@ class SuspectDeviceFilterImplPerformanceTest {
     fun `It correctly flags all known suspect devices with zero false negatives`() {
         val suspectDevices = generateRandomDevices(expectedInsertions)
         suspectDevices.forEach { suspectDeviceFilter.markDeviceAsSuspect(it) }
-        suspectDevices.forEach { assertTrue(suspectDeviceFilter.mightBeSuspect(it)) }
+        suspectDevices.forEach { assertTrue(suspectDeviceFilter.deviceIsSuspect(it)) }
     }
 
     @Test
@@ -35,7 +35,7 @@ class SuspectDeviceFilterImplPerformanceTest {
         println("Testing $numInnocentDevices innocent devices")
         val falsePositiveCount = generateRandomDevices(numInnocentDevices)
             .map { it.toLowerCase() }
-            .count { suspectDeviceFilter.mightBeSuspect(it) }
+            .count { suspectDeviceFilter.deviceIsSuspect(it) }
         println("$falsePositiveCount innocent devices were incorrectly marked suspect")
 
         val falsePositivePercent = (falsePositiveCount / numInnocentDevices.toDouble()) * 100
@@ -89,7 +89,7 @@ class SuspectDeviceFilterImplPerformanceTest {
 class NaiveSuspectDeviceFilter : SuspectDeviceFilter, Serializable {
     private val knownSuspectDevices = HashSet<String>()
 
-    override fun mightBeSuspect(deviceId: String): Boolean {
+    override fun deviceIsSuspect(deviceId: String): Boolean {
         return knownSuspectDevices.contains(deviceId)
     }
 

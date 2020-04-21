@@ -19,7 +19,7 @@ class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTI
         DESIRED_FALSE_POSITIVE_PERCENTAGE
     )
 
-    override fun mightBeSuspect(deviceId: String): Boolean {
+    override fun deviceIsSuspect(deviceId: String): Boolean {
         return bloomFilter.mightContain(deviceId)
     }
 

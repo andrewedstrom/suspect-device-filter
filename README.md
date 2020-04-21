@@ -5,11 +5,11 @@
 
 A small kotlin library which can be used to determine with high accuracy whether a device has been previously marked as suspect. 
 
-This library is built around a `SuspectDeviceFilterImpl` class, which is a fast and memory-efficient cache of known-suspect devices.
+This library is built around a `SuspectDeviceFilter` interface, which is a fast and memory-efficient cache of known-suspect devices.
 
-It is the caller's responsibility to train the filter. The filter only knows what devices to flag based on previous calls to `suspectDeviceFilterImpl.markDeviceAsSuspect(deviceId: String)`. 
+It is the caller's responsibility to train the filter. The filter only knows what devices to flag based on previous calls to `suspectDeviceFilter.markDeviceAsSuspect(deviceId: String)`. 
 
-Given a device ID, `suspectDeviceFilterImpl.mightBeSuspect(deviceId: String)` will report whether a device is either:
+Given a device ID, `suspectDeviceFilter.deviceIsSuspect(deviceId: String)` will report whether a device is either:
 1) definitely not known to be suspect
 2) very likely known to be suspect
 

@@ -14,15 +14,15 @@ class SuspectDeviceFilterImplTest {
     }
 
     @Test
-    fun `mightBeSuspect returns false for unfamiliar devices`() {
-        assertFalse(suspectDeviceFilter.mightBeSuspect("unknown-device"))
+    fun `deviceIsSuspect returns false for unfamiliar devices`() {
+        assertFalse(suspectDeviceFilter.deviceIsSuspect("unknown-device"))
     }
 
     @Test
     fun `markDeviceAsSuspect marks devices as suspect`() {
         val suspectDeviceId = "known-vpn-server-id"
         suspectDeviceFilter.markDeviceAsSuspect(suspectDeviceId)
-        assertTrue(suspectDeviceFilter.mightBeSuspect(suspectDeviceId))
-        assertFalse(suspectDeviceFilter.mightBeSuspect("innocent-device-id"))
+        assertTrue(suspectDeviceFilter.deviceIsSuspect(suspectDeviceId))
+        assertFalse(suspectDeviceFilter.deviceIsSuspect("innocent-device-id"))
     }
 }
