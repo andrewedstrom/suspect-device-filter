@@ -10,11 +10,11 @@ import java.nio.charset.Charset
  *
  * It is very memory efficient. At full capacity it will be less than 15% the size of a naive hashmap-based implementation
  *
- * @param expectedInsertions the maximum number of suspect devices that will be added to this filter. Adding more
+ * @property expectedInsertions the maximum number of suspect devices that will be added to this filter. Adding more
  * devices than this is allowed, but will cause the false positive ratio to rise above [ACCEPTABLE_FALSE_POSITIVE_PERCENTAGE].
  */
 @Suppress("UnstableApiUsage")
-class SuspectDeviceFilterImpl(expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) :
+class SuspectDeviceFilterImpl(val expectedInsertions: Int = DEFAULT_EXPECTED_INSERTIONS) :
     SuspectDeviceFilter, Serializable {
 
     private val bloomFilter = BloomFilter.create(
