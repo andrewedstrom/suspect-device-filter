@@ -16,7 +16,7 @@ Given a device ID, `suspectDeviceFilter.deviceIsSuspect(deviceId: String)` will 
 This library is _not_ meant to be used as a definitive test of whether a device is suspect, as it will report false positives in up to 1% of cases. Instead, it serves as an in-memory cache which can quickly flag potentially suspicious requests to be further vetted downstream.
 
 # Testing the code
-The following will run both functionality and performance tests.
+The following will run both functionality and performance tests. Results of the performance tests will be printed to standard out, and the test suite will fail if performance falls below acceptable values.
 ```
 ./gradlew clean test
 ```
@@ -24,7 +24,7 @@ The following will run both functionality and performance tests.
 The tests can also be run in docker if there are any compatibility issues with your local machine.
 However, this option will likely be much slower as it takes a few minutes for the gradle daemon in the container to start.
 ```
+git clone https://github.com/andrewedstrom/suspect-device-filter.git
+cd suspect-device-filter
 ./scripts/test-with-docker.bash
 ```
-
-Results of the performance tests will be printed to standard out, and the test suite will fail if performance falls below acceptable values. 
